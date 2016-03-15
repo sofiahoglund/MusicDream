@@ -7,10 +7,15 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 			var sky, sunSphere, sphere;
 			var distance = 400000;
 
+			// Function calls
+			init();
+			render();
+
 			function initSky() {
 
 				// Add Sky Mesh
 				sky = new THREE.Sky();
+				
 				scene.add( sky.mesh);
 
 				// Add sphere for sun
@@ -25,7 +30,7 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 				// change sunlight
 				var uniforms = sky.uniforms;
-				uniforms.turbidity.value = 10;
+				uniforms.turbidity.value = 30;
 				uniforms.reileigh.value = 5;
 				uniforms.luminance.value = 1;
 				uniforms.mieCoefficient.value = 0.005;
@@ -46,28 +51,15 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 				// Init the  scenen
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 10, 2000000 );
 				camera.position.set( 0, 0, 130);
-				scene = new THREE.Scene();
+
+
+
 				renderer = new THREE.WebGLRenderer();
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 
-
-
-				// Init the sky/background
-				initSky();
-
-				// Add Spotlight
-	 			var light = new THREE.SpotLight(0xFFFFFF, 1, 1000); 
-	 			light.position.copy(camera.position);
-	 			scene.add(light);
-	 			light.castShadow = true;
-	 			light.shadowDarkness = 0.7;
-	 			renderer.render( scene, camera );
-
-				// Add Ambientlight
-				var lightamb = new THREE.AmbientLight( 0xFFFFFF, 2, 1000 ); // soft white light
-				scene.add( lightamb ); 
+				
 
 				// Add controls for navigation
 				controls = new THREE.OrbitControls( camera, renderer.domElement );
@@ -75,11 +67,14 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 				controls.enableZoom = true;
 				controls.enablePan = true;
 				window.addEventListener( 'resize', onWindowResize, false );	
- 			
- 				}
- 			
 
+					scene = new THREE.Scene();
 
+				// Init the sky/background
+				initSky();
+				
+  				}
+ 			
 			// Controll window size when zooming
 		    function onWindowResize() {
 		    	camera.aspect = window.innerWidth / window.innerHeight;
