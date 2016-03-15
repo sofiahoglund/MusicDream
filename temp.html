@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>A moving camera - Made with three.js</title>
+  <meta charset="utf-8">
+</head>
+<body>
+ 
+  <div id="container"></div>
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+  <script src="js/Three.js"></script>
+  <script src="js/RequestAnimationFrame.js"></script>
+  <script>
+    
+    var camera, scene, renderer;
+    var cube, cylinder;
+    
+    init();
+    animate();
+    
+    function init() {
+     
+      var numberOfSegments = 1;
+      
+  // Instantiate the 3D scene:
+  scene = new THREE.Scene();
+  
+  // Instantiate an Orthographic camera this time.
+  // The Left/Right/Top/Bottom values seem to be relative to the scene's 0, 0, 0 origin.
+  // The best result seems to come if the overall viewable area is divided in 2 and
+  // the Left & Bottom values set to negative
+  camera = new THREE.OrthographicCamera(
+    window.innerWidth / -2,   // Left
+    window.innerWidth / 2,    // Right
+    window.innerHeight / 2,   // Top
+    window.innerHeight / -2,  // Bottom
+    -2000,            // Near clipping plane
+    1000 );           // Far clipping plane
+  
+  // Set the camera position so that it's not on top of our object in the scene:
+  camera.position.y = 100;
+  
+  // Add the camera to the scene:
+  scene.add(camera);
+  
+  // Define a Cylinder object
+  cylinder = new THREE.Mesh(
+    new THREE.CylinderGeometry(25,  // Radius top
+      100,            // Radius bottom
+      100,            // Height
+      25,             // Number of segments in circumference (i.e. how smooth)
+      5,              // Number of segments high
+      false           // Open ended
+      ),
+    new THREE.MeshBasicMaterial( {color: 0x372AFF} )
+    );
+  cylinder.position.x = 400;
+  
+  scene.add(cylinder);
+  
+  // Define the cube object
+  cube = new THREE.Mesh(
+    new THREE.CubeGeometry(200, 200, 200,
+      numberOfSegments, numberOfSegments, numberOfSegments), // Cube geometry
+    new THREE.MeshBasicMaterial( { color: 0x373737} ) // Material
+    );
+  
+  // Add the cube to the scene:
+  scene.add(cube);
+  
+  // Instantiate the renderer
+  renderer = new THREE.CanvasRenderer();
+  // .. and set it's size:
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  
+  // Place the renderer into the HTML (inside the #container div):
+  $('#container').append(renderer.domElement);
+  
+}
+
+function animate() {
+  // Defined in the RequestAnimationFrame.js file, this function means that the
+  // animate function is called upon timeout:
+  requestAnimationFrame( animate );
+  
+  render();
+}
+
+function render() {
+ 
+  // *** Update the scene ***
+  
+  // Set the camera to always point to the centre of our scene, i.e. at vector 0, 0, 0
+  camera.lookAt( scene.position );
+  
+  // Move the camera in a circle with the pivot point in the centre of this circle...
+  // ...so that the pivot point, and focus of the camera is on the centre of our scene.
+  var timer = new Date().getTime() * 0.0005;
+  
+  camera.position.x = Math.floor(Math.cos( timer ) * 200);
+  camera.position.z = Math.floor(Math.sin( timer ) * 200);
+  
+  renderer.render(scene, camera);
+}
+
+</script>
+
+</body>
+</html>
